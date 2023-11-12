@@ -1,0 +1,17 @@
+html, body {
+    height: 100%;
+}
+
+[data-is-root-theme="true"] {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+[data-is-root-theme="true"] > .rt-Container > .rt-ContainerInner {
+    height: 100%;
+}
+
+.rt-Flex {
+    min-width: 0;
+}
