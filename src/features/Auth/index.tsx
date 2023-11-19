@@ -39,7 +39,7 @@ export const Auth: React.FC<AuthProps> = ({
   return (
     <Flex direction="column" height="100%" align="center" gap="4" justify="center">
       <Flex direction="column" gap="2">
-        <Heading size="5" align="center">Factuality</Heading>
+        <Heading size="5" align="center">Shyn</Heading>
         <Text as="p" size="2" align="center" color="gray">
             Please authorize to continue
         </Text>

@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Factuality",
+  title: "Shyn",
   description: "On demand fact checking",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

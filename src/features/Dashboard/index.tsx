@@ -28,7 +28,7 @@ export const Dashboard = () => {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       await apiUtils.check.get.invalidate();
-      createTask({ url }).then((res) => {
+      createTask({ url: url.startsWith("http") ? url : `https://${url}` }).then((res) => {
         router.push(`/dashboard/task/${res}`);
       }).catch((err) => {
         console.error(err);
@@ -48,7 +48,7 @@ export const Dashboard = () => {
     >
       <Flex direction="column" mb="4" gap="2">
         <Heading size="7" align="center" as="h1">
-          Factuality
+          Shyn
         </Heading>
         <Text as="p" size="2" align="center" color="gray">
           Check the factuality of any URL
@@ -58,7 +58,7 @@ export const Dashboard = () => {
         <form onSubmit={handleFormSubmit}>
           <TextField.Root style={{ width: "100%" }}>
             <TextField.Input
-              type="url"
+              type="text"
               placeholder="Enter a URL"
               value={url}
               onChange={handleUrlChange}
