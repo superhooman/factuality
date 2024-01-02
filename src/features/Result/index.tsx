@@ -125,7 +125,7 @@ export const Result = ({ taskId }: Props) => {
               <Callout.Icon>
                 <ExclamationTriangleIcon />
               </Callout.Icon>
-              <Callout.Text>This task failed. Please try again.</Callout.Text>
+              <Callout.Text>Oops, something went wrong. Please try again later.</Callout.Text>
             </Callout.Root>
           ) : null}
         </Flex>
