@@ -25,6 +25,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-site-verification" content="9NDZR3XvkpacoWFZF8dxaK5GImj6zNKsYUc9uTgvi1w" />
+      </head>
       <body className={inter.className}>
         <Theme>
           <TRPCReactProvider cookies={cookies().toString()}>
