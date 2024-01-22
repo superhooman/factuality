@@ -1,9 +1,11 @@
 "use client";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { Button, Callout, Flex, Heading, Text } from "@radix-ui/themes";
+import { Button, Callout, Flex, Heading, Link, Text } from "@radix-ui/themes";
 import { GoogleIcon } from "@src/components/Icon";
 import { signIn } from "next-auth/react";
 import React from "react";
+
+import NextLink from 'next/link';
 
 const ERRROS: Record<string, string> = {
   Signin: "You need to sign in to view this page.",
@@ -63,6 +65,18 @@ export const Auth: React.FC<AuthProps> = ({
         <GoogleIcon size={16} />
         <Text size="2">Sign in with Google</Text>
       </Button>
+      <Flex direction="row" gap="2">
+        <Link asChild size="1" color="gray">
+          <NextLink href="/privacy">
+            Privacy Policy
+          </NextLink>
+        </Link>
+        <Link asChild size="1" color="gray">
+          <NextLink href="/tos">
+            Terms of Service
+          </NextLink>
+        </Link>
+      </Flex>
     </Flex>
   );
 };
