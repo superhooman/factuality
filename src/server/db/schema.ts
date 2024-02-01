@@ -26,6 +26,7 @@ export const checks = mysqlTable(
     taskId: varchar("taskId", { length: 512 }).notNull(),
     url: varchar("url", { length: 512 }).notNull(),
     createdById: varchar("createdById", { length: 512 }).notNull(),
+    message: text("message"),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

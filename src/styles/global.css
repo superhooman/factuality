@@ -15,3 +15,7 @@ html, body {
 .rt-Flex {
     min-width: 0;
 }
+
+.radix-themes {
+    --font-weight-bold: 600;
+}

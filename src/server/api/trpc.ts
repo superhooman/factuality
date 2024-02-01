@@ -11,9 +11,11 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import OpenAI from 'openai';
 
 import { getServerAuthSession } from "@src/server/auth";
 import { db } from "@src/server/db";
+import { env } from "@src/env.mjs";
 
 /**
  * 1. CONTEXT
@@ -38,11 +40,16 @@ interface CreateContextOptions {
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
+  const openai = new OpenAI({
+    apiKey: env.OPENAI_API_KEY
+  });
+
   const session = await getServerAuthSession();
 
   return {
     session,
     headers: opts.headers,
+    openai,
     db,
   };
 };

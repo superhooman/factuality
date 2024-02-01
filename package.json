@@ -29,6 +29,7 @@
     "next": "^14.0.0",
     "next-auth": "^4.24.4",
     "open-graph-scraper": "^6.3.2",
+    "openai": "^4.26.0",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
