@@ -21,10 +21,34 @@ export const createTask = async (url: string) => {
   return (await response.json()) as CreateTaskResponse;
 }
 
+export interface FactualityScores {
+  LOW: number;
+  MIXED: number;
+  HIGH: number;
+}
+
+export interface FreedomScores {
+  MOSTLY_FREE: number;
+  EXCELLENT: number;
+  LIMITED_FREEDOM: number;
+  TOTAL_OPPRESSION: number;
+  MODERATE_FREEDOM: number;
+}
+
+export interface BiasScores {
+  LEAST_BIASED: number;
+  FAR_RIGHT: number;
+  RIGHT: number;
+  RIGHT_CENTER: number;
+  LEFT: number;
+  LEFT_CENTER: number;
+  FAR_LEFT: number;
+}
+
 export interface Scores {
-    label0: number;
-    label1: number;
-    label2: number;
+  factuality: FactualityScores;
+  freedom: FreedomScores;
+  bias: BiasScores;
 }
 
 export interface TaskStatusResponse {

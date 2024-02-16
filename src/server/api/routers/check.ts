@@ -68,9 +68,9 @@ export const checkRouter = createTRPCRouter({
               content: [
                 `I have analyzed the website ${url.host} to determine the factuality of its content. The results of the analysis are as follows:`,
                 'These are label classifications, which are based on the factuality of the content of the website.',
-                `- High Factuality: ${Math.round(data.data.site.label0 * 100)}%`,
-                `- Mixed Factuality: ${Math.round(data.data.site.label1 * 100)}%`,
-                `- Low Factuality: ${Math.round(data.data.site.label2 * 100)}%`,
+                `- High Factuality: ${Math.round(data.data.site.factuality.HIGH * 100)}%`,
+                `- Mixed Factuality: ${Math.round(data.data.site.factuality.MIXED * 100)}%`,
+                `- Low Factuality: ${Math.round(data.data.site.factuality.LOW * 100)}%`,
                 '',
                 'Based on these results, please provide a concise summary that explains the factuality level of the website, and providing insights into what these results imply about the content of the website.',
                 'Do not hesitate to include your own opinion about the website.',
