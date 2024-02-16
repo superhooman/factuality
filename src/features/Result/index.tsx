@@ -291,12 +291,12 @@ const labels: Record<keyof Scores, string[]> = {
   ],
   bias: [
     "Least Biased",
-    "Far Right",
     "Right",
     "Right Center",
-    "Left",
-    "Left Center",
+    "Far Right",
     "Far Left",
+    "Left Center",
+    "Left",
   ],
 };
 
@@ -329,12 +329,12 @@ export const Chart: React.FC<{ input: Scores; score: keyof Scores }> = ({
       if (value === "bias") {
         return [
           input.bias.LEAST_BIASED * 100,
-          input.bias.FAR_RIGHT * 100,
           input.bias.RIGHT * 100,
           input.bias.RIGHT_CENTER * 100,
-          input.bias.LEFT * 100,
-          input.bias.LEFT_CENTER * 100,
+          input.bias.FAR_RIGHT * 100,
           input.bias.FAR_LEFT * 100,
+          input.bias.LEFT_CENTER * 100,
+          input.bias.LEFT * 100,
         ];
       }
       return [];
