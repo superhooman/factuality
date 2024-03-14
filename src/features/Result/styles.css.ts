@@ -23,6 +23,7 @@ export const callout = style({
     color: 'var(--green-a12)',
     padding: 'var(--space-3) var(--space-4)',
     borderRadius: 'var(--radius-4)',
+    maxWidth: 620,
 });
 
 export const tabsRoot = style({

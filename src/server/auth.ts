@@ -8,7 +8,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "@src/env.mjs";
 import { db } from "@src/server/db";
-import { mysqlTable } from "@src/server/db/schema";
+import { pgTable } from "drizzle-orm/pg-core";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: DrizzleAdapter(db, mysqlTable),
+  adapter: DrizzleAdapter(db, pgTable),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

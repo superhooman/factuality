@@ -3,8 +3,6 @@
 import {
   AspectRatio,
   Avatar,
-  Box,
-  Button,
   Callout,
   Card,
   Flex,
@@ -12,7 +10,6 @@ import {
   Inset,
   Select,
   Separator,
-  Tabs,
   Text,
 } from "@radix-ui/themes";
 import { Loader, LoadingContainer } from "@src/components/Loading";
@@ -40,6 +37,7 @@ import {
 import { type Scores } from "@src/server/backend";
 import React from "react";
 import Link from "next/link";
+import { Scale } from "@src/components/Scale";
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -79,46 +77,15 @@ export const Result = ({ taskId }: Props) => {
     return null;
   }
 
-  const scoreSelect = (
-    <Flex align="start" direction="column" gap="1">
-      <Text size="1" weight="bold" color="gray" as="label">
-        Score type
-      </Text>
-      <Select.Root
-        value={score}
-        onValueChange={(v) => setScore(v as keyof Scores)}
-      >
-        <Select.Trigger />
-        <Select.Content>
-          {Object.entries(items).map(([key, value]) => (
-            <Select.Item key={key} value={key}>
-              {value}
-            </Select.Item>
-          ))}
-        </Select.Content>
-      </Select.Root>
-    </Flex>
-  );
-
   const hasMessage = data.message !== null;
 
   return (
-    <Flex direction="column" height="100%" align="center" gap="4" py="4">
-      <Flex width="100%">
-        <Button variant="ghost" asChild>
-          <Link href="/dashboard">
-            <ChevronLeftIcon />
-            <Text as="span" size="2">
-              Back
-            </Text>
-          </Link>
-        </Button>
-      </Flex>
+    <Flex direction="column" height="100%" align="center" grow="1" gap="4">
       <Flex width="100%" align="center" gap="3">
         <Flex shrink="0" p="1" className={cls.favicon}>
           <Favicon size={32} url={data.url} />
         </Flex>
-        <Flex grow="1" direction="column">
+        <Flex direction="column">
           <Heading size="4">Result</Heading>
           <Text className={cls.description} as="p" size="2" color="gray">
             {data.url}
@@ -161,7 +128,7 @@ export const Result = ({ taskId }: Props) => {
       ) : null}
       {/* <OG data={data.og} /> */}
       {hasMessage ? (
-        <Flex gap="2">
+        <Flex gap="2" width="100%">
           <Avatar
             radius="full"
             color="green"
@@ -193,10 +160,9 @@ export const Result = ({ taskId }: Props) => {
         <Flex direction="column" align="start" width="100%">
           {itJustSite ? (
             <>
-              {scoreSelect}
               <Separator mt="3" size="4" />
               {hasMessage ? null : <TextResult input={data.data.data.site} />}
-              <Chart score={score} input={data.data.data.site} />
+              <Chart input={data.data.data.site} />
             </>
           ) : (
             <>
@@ -216,7 +182,6 @@ export const Result = ({ taskId }: Props) => {
                     </Select.Content>
                   </Select.Root>
                 </Flex>
-                {scoreSelect}
               </Flex>
               <Separator mt="3" size="4" />
               {hasMessage ? null : (
@@ -225,7 +190,7 @@ export const Result = ({ taskId }: Props) => {
                   article={tab === "article"}
                 />
               )}
-              <Chart score={score} input={data.data.data[tab]} />
+              <Chart input={data.data.data[tab]} />
             </>
           )}
         </Flex>
@@ -280,91 +245,76 @@ const items: Record<keyof Scores, string> = {
   bias: "Bias",
 };
 
-const labels: Record<keyof Scores, string[]> = {
-  factuality: ["High Factuality", "Mixed Factuality", "Low Factuality"],
-  freedom: [
-    "Mostly Free",
-    "Excellent",
-    "Limited Freedom",
-    "Total Oppression",
-    "Moderate Freedom",
-  ],
-  bias: [
-    "Least Biased",
-    "Right",
-    "Right Center",
-    "Far Right",
-    "Far Left",
-    "Left Center",
-    "Left",
-  ],
-};
-
-export const Chart: React.FC<{ input: Scores; score: keyof Scores }> = ({
+export const Chart: React.FC<{ input: Scores }> = ({
   input,
-  score,
 }) => {
-  const data = React.useMemo(() => {
-    const backgroundColor = "#003eeb11"; // A shade of blue
-    const borderColor = "#3a5bc7"; // A darker shade of blue
+  const factuality = React.useMemo(
+    () => {
+      const result = input.factuality.HIGH - input.factuality.LOW;
 
-    // Extract the values from the factuality data
-    const getScores = (value: keyof Scores) => {
-      if (value === "factuality") {
-        return [
-          input.factuality.HIGH * 100,
-          input.factuality.MIXED * 100,
-          input.factuality.LOW * 100,
-        ];
-      }
-      if (value === "freedom") {
-        return [
-          input.freedom.MOSTLY_FREE * 100,
-          input.freedom.EXCELLENT * 100,
-          input.freedom.LIMITED_FREEDOM * 100,
-          input.freedom.TOTAL_OPPRESSION * 100,
-          input.freedom.MODERATE_FREEDOM * 100,
-        ];
-      }
-      if (value === "bias") {
-        return [
-          input.bias.LEAST_BIASED * 100,
-          input.bias.RIGHT * 100,
-          input.bias.RIGHT_CENTER * 100,
-          input.bias.FAR_RIGHT * 100,
-          input.bias.FAR_LEFT * 100,
-          input.bias.LEFT_CENTER * 100,
-          input.bias.LEFT * 100,
-        ];
-      }
-      return [];
-    };
+      return (result + 1) / 2;
+    },
+    [input.factuality]
+  );
 
-    // Structure the data for Chart.js
-    const chartData: ChartData<"radar"> = {
-      labels: labels[score],
-      datasets: [
-        {
-          label: "Score",
-          data: getScores(score),
-          backgroundColor: backgroundColor,
-          borderColor: borderColor,
-          borderWidth: 1,
-        },
-      ],
-    };
+  const freedom = React.useMemo(
+    () => {
+      const result = input.freedom.EXCELLENT * 1 + input.freedom.MOSTLY_FREE * 0.5 - (input.freedom.TOTAL_OPPRESSION * 1 + input.freedom.LIMITED_FREEDOM * 0.5);
 
-    return chartData;
-  }, [input, score]);
+      return (result + 1) / 2;
+    },
+    [input.freedom]
+  );
+
+  const bias = React.useMemo(
+    () => {
+      const result = input.bias.FAR_RIGHT * 1 + input.bias.RIGHT * 0.666 + input.bias.RIGHT_CENTER * 0.333 - (input.bias.FAR_LEFT * 1 + input.bias.LEFT * 0.666 + input.bias.LEFT_CENTER * 0.333);
+
+      return (result + 1) / 2;
+    },
+    [input.bias]
+  );
 
   return (
-    <>
-      <Radar
-        data={data}
-        // @ts-expect-error - no types for scale
-        options={{ scale: { beginAtZero: true, max: 100 } }}
+    <Flex direction="column" gap="8" py="4" width="100%">
+      <Scale
+        showValue
+        value={factuality}
+        title="Factuality"
+        variant="rainbow"
+        ticks={{
+          0: "Low",
+          0.5: "Mixed",
+          1: "High",
+        }}
       />
-    </>
+      <Scale
+        value={freedom}
+        variant="mono"
+        title="Freedom"
+        ticks={{
+          0: "Total oppression",
+          0.25: "Limited freedom",
+          0.5: "Moderate freedom",
+          0.75: "Mostly free",
+          1: "Excellent",
+        }}
+      />
+      <Scale
+        value={bias}
+        variant="blue-red"
+        title="Bias"
+        ticks={{
+          0: "Far Left",
+          0.166: "Left Center",
+          0.333: "Left",
+          0.5: "Least Biased",
+          0.666: "Right",
+          0.833: "Right Center",
+          1: "Far Right",
+        }}
+      />
+    </Flex>
   );
 };
 
@@ -381,6 +331,7 @@ export const OG: React.FC<{ data: ErrorResult | SuccessResult }> = ({
     <Card size="2" style={{ maxWidth: "100%" }}>
       <Inset clip="padding-box" side="top" pb="current">
         <AspectRatio ratio={16 / 6}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={image}
             alt={title}
