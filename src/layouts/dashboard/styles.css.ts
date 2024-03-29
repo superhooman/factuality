@@ -29,7 +29,7 @@ export const sidebar = style({
 
 export const wrapper = style({
     display: 'flex',
-    padding: 'var(--space-5)',
+    padding: 'var(--space-4) var(--space-5)',
     maxWidth: 'calc(100% - 320px)',
     flexGrow: 1,
 

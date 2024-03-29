@@ -45,10 +45,62 @@ export interface BiasScores {
   FAR_LEFT: number;
 }
 
+export interface GenreScores {
+  OPINION: number;
+  SATIRE: number;
+  REPORTING: number;
+}
+
+export interface FramingScores {
+  ECONOMIC: number;
+  MORALITY: number;
+  POLITICAL: number;
+  PUBLIC_OPINION: number;
+  QUALITY_OF_LIFE: number;
+  CULTURAL_IDENTITY: number;
+  HEALTH_AND_SAFETY: number;
+  CRIME_AND_PUNISHMENT: number;
+  SECURITY_AND_DEFENSE: number;
+  FAIRNESS_AND_EQUALITY: number;
+  CAPACITY_AND_RESOURCES: number;
+  EXTERNAL_REGULATION_AND_REPUTATION: number;
+  POLICY_PRESCRIPTION_AND_EVALUATION: number;
+  LEGALITY_CONSTITUTIONALITY_AND_JURISPRUDENCE: number;
+}
+
+export interface ManipulationData {
+  DOUBT: number;
+  SLOGANS: number;
+  STRAW_MAN: number;
+  REPETITION: number;
+  FLAG_WAVING: number;
+  RED_HERRING: number;
+  WHATABOUTISM: number;
+  APPEAL_TO_TIME: number;
+  LOADED_LANGUAGE: number;
+  APPEAL_TO_VALUES: number;
+  APPEAL_TO_AUTHORITY: number;
+  APPEAL_TO_HYPOCRISY: number;
+  CONVERSATION_KILLER: number;
+  APPEAL_TO_POPULARITY: number;
+  GUILT_BY_ASSOCIATION: number;
+  'NAME_CALLING-LABELING': number;
+  'FALSE_DILEMMA-NO_CHOICE': number;
+  'APPEAL_TO_FEAR-PREJUDICE': number;
+  CAUSAL_OVERSIMPLIFICATION: number;
+  'EXAGGERATION-MINIMISATION': number;
+  QUESTIONING_THE_REPUTATION: number;
+  'OBFUSCATION-VAGUENESS-CONFUSION': number;
+  CONSEQUENTIAL_OVERSIMPLIFICATION: number;
+}
+
 export interface Scores {
   factuality: FactualityScores;
   freedom: FreedomScores;
   bias: BiasScores;
+  genre?: GenreScores;
+  framing?: FramingScores | null;
+  manipulation?: ManipulationData | null;
 }
 
 export interface TaskStatusResponse {

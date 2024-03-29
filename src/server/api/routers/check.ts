@@ -48,7 +48,7 @@ export const checkRouter = createTRPCRouter({
       }).from(checks).where(eq(checks.taskId, input.taskId));
 
       const dbRecord = check[0];
-      let message: string | null = null;
+      // let message: string | null = null;
 
       if (!dbRecord) {
         throw new TRPCError({ code: 'BAD_REQUEST' });
@@ -58,49 +58,49 @@ export const checkRouter = createTRPCRouter({
 
       const data = await getTask(input.taskId);
 
-      if (data.status === 'COMPLETED' && data.data && dbRecord.message === null) {
-        const url = new URL(dbRecord.url);
+      // if (data.status === 'COMPLETED' && data.data && dbRecord.message === null) {
+      //   const url = new URL(dbRecord.url);
 
-        const completion = await ctx.openai.chat.completions.create({
-          messages: [
-            {
-              role: 'user',
-              content: [
-                `I have analyzed the website ${url.host} to determine the factuality of its content. The results of the analysis are as follows:`,
-                'These are label classifications, which are based on the factuality of the content of the website.',
-                `- High Factuality: ${Math.round(data.data.site.factuality.HIGH * 100)}%`,
-                `- Mixed Factuality: ${Math.round(data.data.site.factuality.MIXED * 100)}%`,
-                `- Low Factuality: ${Math.round(data.data.site.factuality.LOW * 100)}%`,
-                '',
-                'Based on these results, please provide a concise summary that explains the factuality level of the website, and providing insights into what these results imply about the content of the website.',
-                'Do not hesitate to include your own opinion about the website.',
-                'Please, keep it short and concise. Keep it around 360 characters.',
-              ].join('\n')
-            }
-          ],
-          model: 'gpt-3.5-turbo',
-        });
+      //   const completion = await ctx.openai.chat.completions.create({
+      //     messages: [
+      //       {
+      //         role: 'user',
+      //         content: [
+      //           `I have analyzed the website ${url.host} to determine the factuality of its content. The results of the analysis are as follows:`,
+      //           'These are label classifications, which are based on the factuality of the content of the website.',
+      //           `- High Factuality: ${Math.round(data.data.site.factuality.HIGH * 100)}%`,
+      //           `- Mixed Factuality: ${Math.round(data.data.site.factuality.MIXED * 100)}%`,
+      //           `- Low Factuality: ${Math.round(data.data.site.factuality.LOW * 100)}%`,
+      //           '',
+      //           'Based on these results, please provide a concise summary that explains the factuality level of the website, and providing insights into what these results imply about the content of the website.',
+      //           'Do not hesitate to include your own opinion about the website.',
+      //           'Please, keep it short and concise. Keep it around 360 characters.',
+      //         ].join('\n')
+      //       }
+      //     ],
+      //     model: 'gpt-3.5-turbo',
+      //   });
 
-        const text = completion.choices[0]?.message.content;
+      //   const text = completion.choices[0]?.message.content;
 
-        if (text) {
-          message = text;
+      //   if (text) {
+      //     message = text;
 
-          await ctx.db.update(checks).set({
-            message: text,
-          }).where(eq(checks.taskId, input.taskId));
-        }
-      }
+      //     await ctx.db.update(checks).set({
+      //       message: text,
+      //     }).where(eq(checks.taskId, input.taskId));
+      //   }
+      // }
 
-      if (dbRecord.message) {
-        message = dbRecord.message;
-      }
+      // if (dbRecord.message) {
+      //   message = dbRecord.message;
+      // }
 
       return {
         url: dbRecord.url,
         createdAt: dbRecord.createdAt,
         data,
-        message,
+        // message,
         // og,
       };
     }),

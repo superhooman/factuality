@@ -3,6 +3,7 @@ import { style } from "@vanilla-extract/css";
 
 export const root = style({
     padding: 'var(--space-5) 0',
+    paddingBottom: 'var(--space-7)',
     width: '100%',
 
     selectors: {
