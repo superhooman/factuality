@@ -8,6 +8,7 @@ import {
   timestamp,
   varchar,
   pgTable,
+  json,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -19,6 +20,7 @@ export const checks = pgTable(
     url: varchar("url", { length: 512 }).notNull(),
     createdById: varchar("createdById", { length: 512 }).notNull(),
     message: text("message"),
+    topics: json('topics'),
     createdAt: timestamp("created_at")
       .defaultNow()
       .notNull(),

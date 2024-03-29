@@ -39,6 +39,7 @@ export const wrapper = style({
         },
         [media.down('sm')]: {
             maxWidth: '100%',
+            padding: 'var(--space-4)',
         }
     }
 });

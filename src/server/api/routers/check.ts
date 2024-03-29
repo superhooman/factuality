@@ -10,6 +10,15 @@ import { z } from "zod";
 
 // import ogs from 'open-graph-scraper';
 
+const topicSchema = z.object({
+    general: z.string(),
+    economic: z.string(),
+    education: z.string(),
+    environmental: z.string(),
+});
+
+type Topics = z.infer<typeof topicSchema>;
+
 export const checkRouter = createTRPCRouter({
   get: protectedProcedure
     .query(async ({ ctx }) => {
@@ -44,11 +53,11 @@ export const checkRouter = createTRPCRouter({
       const check = await ctx.db.select({
         url: checks.url,
         createdAt: checks.createdAt,
-        message: checks.message,
+        topics: checks.topics,
       }).from(checks).where(eq(checks.taskId, input.taskId));
 
       const dbRecord = check[0];
-      // let message: string | null = null;
+      let topics: Topics | null = null;
 
       if (!dbRecord) {
         throw new TRPCError({ code: 'BAD_REQUEST' });
@@ -58,48 +67,69 @@ export const checkRouter = createTRPCRouter({
 
       const data = await getTask(input.taskId);
 
-      // if (data.status === 'COMPLETED' && data.data && dbRecord.message === null) {
-      //   const url = new URL(dbRecord.url);
+      if (data.status === 'COMPLETED' && data.data && dbRecord.topics === null) {
+        const url = new URL(dbRecord.url);
 
-      //   const completion = await ctx.openai.chat.completions.create({
-      //     messages: [
-      //       {
-      //         role: 'user',
-      //         content: [
-      //           `I have analyzed the website ${url.host} to determine the factuality of its content. The results of the analysis are as follows:`,
-      //           'These are label classifications, which are based on the factuality of the content of the website.',
-      //           `- High Factuality: ${Math.round(data.data.site.factuality.HIGH * 100)}%`,
-      //           `- Mixed Factuality: ${Math.round(data.data.site.factuality.MIXED * 100)}%`,
-      //           `- Low Factuality: ${Math.round(data.data.site.factuality.LOW * 100)}%`,
-      //           '',
-      //           'Based on these results, please provide a concise summary that explains the factuality level of the website, and providing insights into what these results imply about the content of the website.',
-      //           'Do not hesitate to include your own opinion about the website.',
-      //           'Please, keep it short and concise. Keep it around 360 characters.',
-      //         ].join('\n')
-      //       }
-      //     ],
-      //     model: 'gpt-3.5-turbo',
-      //   });
+        const completion = await ctx.openai.chat.completions.create({
+          messages: [
+            {
+              role: 'user',
+              content: [
+                'General Philosophy',
+                'Left: Collectivism: Community over the individual. Equality, environmental protection, expanded educational opportunities, social safety nets for those who need them. ',
+                'Right: Individualism: Individual over the community. Limited Government with Individual freedom and personal property rights. Competition. ',
+                '',
+                'Economic Policy',
+                'Left: Income equality; higher tax rates on the wealthy; government spending on social programs and infrastructure; stronger regulations on business. Minimum wages and some redistribution of wealth.',
+                'Right: Lower taxes; less regulation on businesses; reduced government spending.  The government should tax less and spend less. Charity over social safety nets. Wages should be set by the free market.',
+                '',
+                'Education Policy',
+                'Left: Favor expanded free, public education. Reduced cost or free college.',
+                'Right: Supports homeschooling and private schools. Generally not opposed to public education, but critical of what is taught.',
+                '',
+                'Environmental Policy',
+                'Left: Regulations to protect the environment. Climate change is human-influenced and immediate action is needed to slow it.',
+                'Right: Considers the economic impact of environmental regulation. Believe the free market will find its own solution to environmental problems, including climate change. Some deny climate change is human-influenced.',
+                '',
+                `Given that, what is the stance of ${url.hostname} on these topics?`,
+                '',
+                'Give only json output, for example:',
+                '```json',
+                '{',
+                '    "general": "...",',
+                '    "economic": "...",',
+                '    "education": "...",',
+                '    "environmental": "..."',
+                '}',
+                '```'
+              ].join('\n')
+            }
+          ],
+          model: 'gpt-3.5-turbo',
+        });
 
-      //   const text = completion.choices[0]?.message.content;
+        const text = completion.choices[0]?.message.content;
 
-      //   if (text) {
-      //     message = text;
+        if (text) {
+            const parsed = topicSchema.safeParse(JSON.parse(text));
 
-      //     await ctx.db.update(checks).set({
-      //       message: text,
-      //     }).where(eq(checks.taskId, input.taskId));
-      //   }
-      // }
+            if (parsed.success) {
+                topics = parsed.data;
 
-      // if (dbRecord.message) {
-      //   message = dbRecord.message;
-      // }
+                await ctx.db.update(checks).set({ topics }).where(eq(checks.taskId, input.taskId));
+            }
+        }
+      }
+
+      if (dbRecord.topics) {
+        topics = dbRecord.topics as Topics;
+      }
 
       return {
         url: dbRecord.url,
         createdAt: dbRecord.createdAt,
         data,
+        topics,
         // message,
         // og,
       };

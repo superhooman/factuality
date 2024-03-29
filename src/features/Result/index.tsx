@@ -31,6 +31,13 @@ interface Props {
     taskId: string;
 }
 
+const topics = {
+    "general": "Edition.cnn.com tends to align more with collectivist principles, emphasizing community values and social equality. It supports environmental protection measures and expanded educational opportunities.",
+    "economic": "Edition.cnn.com leans towards left-leaning economic policies, advocating for higher taxes on the wealthy, government spending on social programs and infrastructure, and stronger regulations on businesses.",
+    "education": "Edition.cnn.com favors expanded free, public education and reduced costs or free college, aligning with left-leaning education policies.",
+    "environmental": "Edition.cnn.com supports environmental regulations and acknowledges human influence on climate change, indicating a stance in line with left-leaning environmental policies."
+};
+
 export const Result = ({ taskId }: Props) => {
     const [tab, setTab] = React.useState('article' as 'article' | 'site');
     const [polling, setPolling] = React.useState(true);
@@ -141,6 +148,20 @@ export const Result = ({ taskId }: Props) => {
             ) : null}
             {data.data.status === 'COMPLETED' && data.data.data ? (
                 <Flex direction="column" align="start" width="100%">
+                    {data.topics && tab === 'site' ? (
+                        <Grid gap="4" columns={{
+                            initial: '1',
+                            sm: '2',
+                            md: String(Object.keys(data.topics).length),
+                        }}>
+                            {Object.entries(data.topics).map(([key, value]) => (
+                                <Card key={key}>
+                                    <Heading mb="1" size="1" weight="bold">{key.toUpperCase()}</Heading>
+                                    <Text as="p" size="2">{value}</Text>
+                                </Card>
+                            ))}
+                        </Grid>
+                    ) : null}
                     <Chart input={data.data.data[itJustSite ? 'site' : tab]} />
                 </Flex>
             ) : null}
@@ -290,8 +311,8 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                     title="Freedom"
                     ticks={{
                         0: 'Total oppression',
-                        0.25: 'Limited freedom',
-                        0.5: 'Moderate freedom',
+                        0.25: 'Limited',
+                        0.5: 'Moderate',
                         0.75: 'Mostly free',
                         1: 'Excellent',
                     }}
