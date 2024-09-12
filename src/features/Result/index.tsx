@@ -22,7 +22,12 @@ import {
     ExclamationTriangleIcon,
     InfoCircledIcon,
 } from '@radix-ui/react-icons';
-import { FramingScores, GenreScores, ManipulationData, type Scores } from '@src/server/backend';
+import {
+    type FramingScores,
+    type GenreScores,
+    type ManipulationData,
+    type Scores,
+} from '@src/server/backend';
 import React from 'react';
 import { Scale } from '@src/components/Scale';
 import { Bar } from '@src/components/Bar';
@@ -31,12 +36,12 @@ interface Props {
     taskId: string;
 }
 
-const topics = {
-    "general": "Edition.cnn.com tends to align more with collectivist principles, emphasizing community values and social equality. It supports environmental protection measures and expanded educational opportunities.",
-    "economic": "Edition.cnn.com leans towards left-leaning economic policies, advocating for higher taxes on the wealthy, government spending on social programs and infrastructure, and stronger regulations on businesses.",
-    "education": "Edition.cnn.com favors expanded free, public education and reduced costs or free college, aligning with left-leaning education policies.",
-    "environmental": "Edition.cnn.com supports environmental regulations and acknowledges human influence on climate change, indicating a stance in line with left-leaning environmental policies."
-};
+// const topics = {
+//     "general": "Edition.cnn.com tends to align more with collectivist principles, emphasizing community values and social equality. It supports environmental protection measures and expanded educational opportunities.",
+//     "economic": "Edition.cnn.com leans towards left-leaning economic policies, advocating for higher taxes on the wealthy, government spending on social programs and infrastructure, and stronger regulations on businesses.",
+//     "education": "Edition.cnn.com favors expanded free, public education and reduced costs or free college, aligning with left-leaning education policies.",
+//     "environmental": "Edition.cnn.com supports environmental regulations and acknowledges human influence on climate change, indicating a stance in line with left-leaning environmental policies."
+// };
 
 export const Result = ({ taskId }: Props) => {
     const [tab, setTab] = React.useState('article' as 'article' | 'site');
@@ -149,15 +154,22 @@ export const Result = ({ taskId }: Props) => {
             {data.data.status === 'COMPLETED' && data.data.data ? (
                 <Flex direction="column" align="start" width="100%">
                     {data.topics && tab === 'site' ? (
-                        <Grid gap="4" columns={{
-                            initial: '1',
-                            sm: '2',
-                            md: String(Object.keys(data.topics).length),
-                        }}>
+                        <Grid
+                            gap="4"
+                            columns={{
+                                initial: '1',
+                                sm: '2',
+                                md: String(Object.keys(data.topics).length),
+                            }}
+                        >
                             {Object.entries(data.topics).map(([key, value]) => (
                                 <Card key={key}>
-                                    <Heading mb="1" size="1" weight="bold">{key.toUpperCase()}</Heading>
-                                    <Text as="p" size="2">{value}</Text>
+                                    <Heading mb="1" size="1" weight="bold">
+                                        {key.toUpperCase()}
+                                    </Heading>
+                                    <Text as="p" size="2">
+                                        {value}
+                                    </Text>
                                 </Card>
                             ))}
                         </Grid>
@@ -247,18 +259,17 @@ export const MANIPULATION_LABELS: Record<keyof ManipulationData, string> = {
     FLAG_WAVING: 'Flag Waving',
     WHATABOUTISM: 'Whataboutism',
     QUESTIONING_THE_REPUTATION: 'Questioning the Reputation',
-    "EXAGGERATION-MINIMISATION": 'Exaggeration / Minimisation',
-    "OBFUSCATION-VAGUENESS-CONFUSION": 'Obfuscation / Vagueness / Confusion',
+    'EXAGGERATION-MINIMISATION': 'Exaggeration / Minimisation',
+    'OBFUSCATION-VAGUENESS-CONFUSION': 'Obfuscation / Vagueness / Confusion',
     CAUSAL_OVERSIMPLIFICATION: 'Causal Oversimplification',
     CONSEQUENTIAL_OVERSIMPLIFICATION: 'Consequential Oversimplification',
-    "APPEAL_TO_FEAR-PREJUDICE": 'Appeal to Fear / Prejudice',
+    'APPEAL_TO_FEAR-PREJUDICE': 'Appeal to Fear / Prejudice',
     STRAW_MAN: 'Straw Man',
     CONVERSATION_KILLER: 'Conversation Killer',
     LOADED_LANGUAGE: 'Loaded Language',
-    "NAME_CALLING-LABELING": 'Name Calling / Labeling',
-    "FALSE_DILEMMA-NO_CHOICE": 'False Dilemma / No Choice',
-}
-
+    'NAME_CALLING-LABELING': 'Name Calling / Labeling',
+    'FALSE_DILEMMA-NO_CHOICE': 'False Dilemma / No Choice',
+};
 
 export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
     const factuality = React.useMemo(() => {
@@ -334,21 +345,34 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                     }}
                 />
             </Card>
-            <Grid columns={{ initial: "1", sm: "2" }} gap="4">
+            <Grid columns={{ initial: '1', sm: '2' }} gap="4">
                 {input.genre ? (
                     <Card>
-                        <Bar title="Genre" data={input.genre} labels={GENRE_LABELS} filter={false} />
+                        <Bar
+                            title="Genre"
+                            data={input.genre}
+                            labels={GENRE_LABELS}
+                            filter={false}
+                        />
                     </Card>
                 ) : null}
                 {input.manipulation ? (
                     <Card>
-                        <Bar title="Manipulation" data={input.manipulation} labels={MANIPULATION_LABELS} />
+                        <Bar
+                            title="Manipulation"
+                            data={input.manipulation}
+                            labels={MANIPULATION_LABELS}
+                        />
                     </Card>
                 ) : null}
             </Grid>
             {input.framing ? (
                 <Card>
-                    <Bar title="Framing" data={input.framing} labels={FRAMING_LABELS} />
+                    <Bar
+                        title="Framing"
+                        data={input.framing}
+                        labels={FRAMING_LABELS}
+                    />
                 </Card>
             ) : null}
         </Flex>
