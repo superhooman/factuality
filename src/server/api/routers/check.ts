@@ -108,10 +108,13 @@ export const checkRouter = createTRPCRouter({
           model: 'gpt-3.5-turbo',
         });
 
-        const text = completion.choices[0]?.message.content;
+        const text = completion.choices[0]?.message.content ?? '{}';
+        const jsonStartIndex = text.indexOf("{");
+        const jsonEndIndex = text.lastIndexOf("}");
+        const jsonContent = text.substring(jsonStartIndex, jsonEndIndex + 1);
 
         if (text) {
-            const parsed = topicSchema.safeParse(JSON.parse(text));
+            const parsed = topicSchema.safeParse(JSON.parse(jsonContent));
 
             if (parsed.success) {
                 topics = parsed.data;
