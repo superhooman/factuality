@@ -94,13 +94,23 @@ export interface ManipulationData {
   CONSEQUENTIAL_OVERSIMPLIFICATION: number;
 }
 
+export type BiasLabels = 'far-right' | 'right' | 'right-center' | 'center' | 'left-center' | 'left' | 'far-left';
+export type FactualityLabels = 'low' | 'mixed' | 'high';
+export type FramingLabels = 'Morality' | 'Political' | 'Legality_Constitutionality_and_jurisprudence' | 'Security_and_defense' | 'Fairness_and_equality' | 'External_regulation_and_reputation' | 'Capacity_and_resources' | 'Health_and_safety';
+export type GenreLabels = 'opinion' | 'satire' | 'reporting';
+export type Persuasion = 'Loaded_Language' | 'Name_Calling-Labeling' | 'Repetition' | 'Exaggeration-Minimisation' | 'Flag_Waving' | 'Appeal_to_Fear-Prejudice';
+
+export interface Label<T> {
+    label: T;
+    score: number;
+}
+
 export interface Scores {
-  factuality: FactualityScores;
-  freedom: FreedomScores;
-  bias: BiasScores;
-  genre?: GenreScores;
-  framing?: FramingScores | null;
-  manipulation?: ManipulationData | null;
+  bias: Label<BiasLabels>[];
+  factuality: Label<FactualityLabels>[];
+  framing: Label<FramingLabels>[];
+  genre: Label<GenreLabels>[];
+  persuasion: Label<Persuasion>[];
 }
 
 export interface TaskStatusResponse {

@@ -8,7 +8,6 @@ import {
     Grid,
     Heading,
     Inset,
-    Select,
     Text,
 } from '@radix-ui/themes';
 import { Loader, LoadingContainer } from '@src/components/Loading';
@@ -23,25 +22,19 @@ import {
     InfoCircledIcon,
 } from '@radix-ui/react-icons';
 import {
-    type FramingScores,
-    type GenreScores,
-    type ManipulationData,
+    type FramingLabels,
+    type GenreLabels,
+    type Persuasion,
     type Scores,
 } from '@src/server/backend';
 import React from 'react';
 import { Scale } from '@src/components/Scale';
 import { Bar } from '@src/components/Bar';
+import { labelsToDict } from '@src/utils/labelsToDict';
 
 interface Props {
     taskId: string;
 }
-
-// const topics = {
-//     "general": "Edition.cnn.com tends to align more with collectivist principles, emphasizing community values and social equality. It supports environmental protection measures and expanded educational opportunities.",
-//     "economic": "Edition.cnn.com leans towards left-leaning economic policies, advocating for higher taxes on the wealthy, government spending on social programs and infrastructure, and stronger regulations on businesses.",
-//     "education": "Edition.cnn.com favors expanded free, public education and reduced costs or free college, aligning with left-leaning education policies.",
-//     "environmental": "Edition.cnn.com supports environmental regulations and acknowledges human influence on climate change, indicating a stance in line with left-leaning environmental policies."
-// };
 
 export const Result = ({ taskId }: Props) => {
     const [tab, setTab] = React.useState('article' as 'article' | 'site');
@@ -98,7 +91,7 @@ export const Result = ({ taskId }: Props) => {
                         {data.url}
                     </Text>
                 </Flex>
-                <Flex align="start" shrink="0" direction="column" gap="1">
+                {/* <Flex align="start" shrink="0" direction="column" gap="1">
                     <Text size="1" weight="bold" color="gray" as="label">
                         Based on
                     </Text>
@@ -112,7 +105,7 @@ export const Result = ({ taskId }: Props) => {
                             <Select.Item value="site">Website</Select.Item>
                         </Select.Content>
                     </Select.Root>
-                </Flex>
+                </Flex> */}
             </Flex>
             {data.data.status !== 'COMPLETED' ? (
                 <Flex width="100%" direction="column">
@@ -195,14 +188,16 @@ export const TextResult: React.FC<{ input: Scores; article?: boolean }> = ({
 
         let interpretation = '';
 
-        if (input.factuality.HIGH > thresholds.high) {
+        const factuality = labelsToDict(input.factuality);
+
+        if (factuality.high > thresholds.high) {
             interpretation = `The ${what} appears to be highly credible and trustworthy, with a significant amount of factual content.`;
         } else if (
-            input.factuality.HIGH > thresholds.low &&
-            input.factuality.MIXED > thresholds.low
+            factuality.high > thresholds.low &&
+            factuality.mixed > thresholds.low
         ) {
             interpretation = `The ${what} has a mix of credible and less reliable information. It is recommended to cross-check the facts.`;
-        } else if (input.factuality.LOW > thresholds.high) {
+        } else if (factuality.low > thresholds.high) {
             interpretation = `The ${what} is likely to contain unreliable information and should be used with caution for factual references.`;
         } else {
             interpretation = `The ${what} has varying levels of factuality and it may be necessary to consult additional sources for verification.`;
@@ -221,81 +216,64 @@ export const TextResult: React.FC<{ input: Scores; article?: boolean }> = ({
     );
 };
 
-const GENRE_LABELS: Record<keyof GenreScores, string> = {
-    OPINION: 'Opinion',
-    SATIRE: 'Satire',
-    REPORTING: 'Reporting',
+const GENRE_LABELS: Record<GenreLabels, string> = {
+    opinion: 'Opinion',
+    satire: 'Satire',
+    reporting: 'Reporting',
 };
 
-const FRAMING_LABELS: Record<keyof FramingScores, string> = {
-    ECONOMIC: 'Economic',
-    MORALITY: 'Morality',
-    POLITICAL: 'Political',
-    PUBLIC_OPINION: 'Public Opinion',
-    QUALITY_OF_LIFE: 'Quality of Life',
-    CULTURAL_IDENTITY: 'Cultural Identity',
-    HEALTH_AND_SAFETY: 'Health and Safety',
-    CRIME_AND_PUNISHMENT: 'Crime and Punishment',
-    SECURITY_AND_DEFENSE: 'Security and Defense',
-    FAIRNESS_AND_EQUALITY: 'Fairness and Equality',
-    CAPACITY_AND_RESOURCES: 'Capacity and Resources',
-    EXTERNAL_REGULATION_AND_REPUTATION: 'External Regulation and Reputation',
-    POLICY_PRESCRIPTION_AND_EVALUATION: 'Policy Prescription and Evaluation',
-    LEGALITY_CONSTITUTIONALITY_AND_JURISPRUDENCE:
-        'Legality, Constitutionality, and Jurisprudence',
+const FRAMING_LABELS: Record<FramingLabels, string> = {
+    'Fairness_and_equality': 'Fairness and Equality',
+    'Legality_Constitutionality_and_jurisprudence': 'Legality, Constitutionality and Jurisprudence',
+    'Morality': 'Morality',
+    'Political': 'Political',
+    'Security_and_defense': 'Security and Defense',
+    'Capacity_and_resources': 'Capacity and Resources',
+    'External_regulation_and_reputation': 'External Regulation and Reputation',
+    'Health_and_safety': 'Health and Safety',
 };
 
-export const MANIPULATION_LABELS: Record<keyof ManipulationData, string> = {
-    DOUBT: 'Doubt',
-    APPEAL_TO_AUTHORITY: 'Appeal to Authority',
-    APPEAL_TO_HYPOCRISY: 'Appeal to Hypocrisy',
-    APPEAL_TO_POPULARITY: 'Appeal to Popularity',
-    APPEAL_TO_TIME: 'Appeal to Time',
-    APPEAL_TO_VALUES: 'Appeal to Values',
-    RED_HERRING: 'Red Herring',
-    REPETITION: 'Repetition',
-    SLOGANS: 'Slogans',
-    GUILT_BY_ASSOCIATION: 'Guilt by Association',
-    FLAG_WAVING: 'Flag Waving',
-    WHATABOUTISM: 'Whataboutism',
-    QUESTIONING_THE_REPUTATION: 'Questioning the Reputation',
-    'EXAGGERATION-MINIMISATION': 'Exaggeration / Minimisation',
-    'OBFUSCATION-VAGUENESS-CONFUSION': 'Obfuscation / Vagueness / Confusion',
-    CAUSAL_OVERSIMPLIFICATION: 'Causal Oversimplification',
-    CONSEQUENTIAL_OVERSIMPLIFICATION: 'Consequential Oversimplification',
-    'APPEAL_TO_FEAR-PREJUDICE': 'Appeal to Fear / Prejudice',
-    STRAW_MAN: 'Straw Man',
-    CONVERSATION_KILLER: 'Conversation Killer',
-    LOADED_LANGUAGE: 'Loaded Language',
-    'NAME_CALLING-LABELING': 'Name Calling / Labeling',
-    'FALSE_DILEMMA-NO_CHOICE': 'False Dilemma / No Choice',
+export const MANIPULATION_LABELS: Record<Persuasion, string> = {
+    'Exaggeration-Minimisation': 'Exaggeration / Minimisation',
+    'Flag_Waving': 'Flag Waving',
+    'Loaded_Language': 'Loaded Language',
+    'Name_Calling-Labeling': 'Name Calling / Labeling',
+    'Repetition': 'Repetition',
+    'Appeal_to_Fear-Prejudice': 'Appeal to Fear / Prejudice',
+};
+
+const valueOrZero = (value: number | undefined) => {
+    if (typeof value === 'undefined') return 0;
+
+    if (value < 0) return 0;
+
+    return value;
 };
 
 export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
     const factuality = React.useMemo(() => {
-        const result = input.factuality.HIGH - input.factuality.LOW;
+        const factuality = labelsToDict(input.factuality);
+
+        const result = factuality.high - factuality.low;
 
         return (result + 1) / 2;
     }, [input.factuality]);
 
-    const freedom = React.useMemo(() => {
-        const result =
-            input.freedom.EXCELLENT * 1 +
-            input.freedom.MOSTLY_FREE * 0.5 -
-            (input.freedom.TOTAL_OPPRESSION * 1 +
-                input.freedom.LIMITED_FREEDOM * 0.5);
-
-        return (result + 1) / 2;
-    }, [input.freedom]);
-
     const bias = React.useMemo(() => {
-        const result =
-            input.bias.FAR_RIGHT * 1 +
-            input.bias.RIGHT * 0.666 +
-            input.bias.RIGHT_CENTER * 0.333 -
-            (input.bias.FAR_LEFT * 1 +
-                input.bias.LEFT * 0.666 +
-                input.bias.LEFT_CENTER * 0.333);
+        const bias = labelsToDict(input.bias);
+
+        const items = [
+            valueOrZero(bias['far-right']) * 1,
+            valueOrZero(bias.right) * 0.666,
+            valueOrZero(bias['right-center']) * 0.333,
+            valueOrZero(bias['left-center']) * -0.333,
+            valueOrZero(bias.left) * -0.666,
+            valueOrZero(bias['far-left']) * -1,
+        ];
+
+        const result = items.reduce((acc, item) => acc + item, 0);
+
+        console.log(items, result, bias);
 
         return (result + 1) / 2;
     }, [input.bias]);
@@ -315,7 +293,7 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                     }}
                 />
             </Card>
-            <Card>
+            {/* <Card>
                 <Scale
                     value={freedom}
                     variant="mono"
@@ -328,7 +306,7 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                         1: 'Excellent',
                     }}
                 />
-            </Card>
+            </Card> */}
             <Card>
                 <Scale
                     value={bias}
@@ -336,11 +314,11 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                     title="Bias"
                     ticks={{
                         0: 'Far Left',
-                        0.166: 'Left Center',
-                        0.333: 'Left',
+                        // 0.166: 'Left Center',
+                        0.25: 'Left',
                         0.5: 'Least Biased',
-                        0.666: 'Right',
-                        0.833: 'Right Center',
+                        0.75: 'Right',
+                        // 0.833: 'Right Center',
                         1: 'Far Right',
                     }}
                 />
@@ -350,17 +328,17 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                     <Card>
                         <Bar
                             title="Genre"
-                            data={input.genre}
+                            data={labelsToDict(input.genre)}
                             labels={GENRE_LABELS}
                             filter={false}
                         />
                     </Card>
                 ) : null}
-                {input.manipulation ? (
+                {input.persuasion ? (
                     <Card>
                         <Bar
-                            title="Manipulation"
-                            data={input.manipulation}
+                            title="Persuasion"
+                            data={labelsToDict(input.persuasion)}
                             labels={MANIPULATION_LABELS}
                         />
                     </Card>
@@ -370,7 +348,7 @@ export const Chart: React.FC<{ input: Scores }> = ({ input }) => {
                 <Card>
                     <Bar
                         title="Framing"
-                        data={input.framing}
+                        data={labelsToDict(input.framing)}
                         labels={FRAMING_LABELS}
                     />
                 </Card>
