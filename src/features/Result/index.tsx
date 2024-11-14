@@ -8,6 +8,7 @@ import {
     Grid,
     Heading,
     Inset,
+    Select,
     Text,
 } from '@radix-ui/themes';
 import { Loader, LoadingContainer } from '@src/components/Loading';
@@ -91,21 +92,23 @@ export const Result = ({ taskId }: Props) => {
                         {data.url}
                     </Text>
                 </Flex>
-                {/* <Flex align="start" shrink="0" direction="column" gap="1">
-                    <Text size="1" weight="bold" color="gray" as="label">
-                        Based on
-                    </Text>
-                    <Select.Root
-                        value={tab}
-                        onValueChange={(v) => setTab(v as 'article' | 'site')}
-                    >
-                        <Select.Trigger />
-                        <Select.Content>
-                            <Select.Item value="article">Article</Select.Item>
-                            <Select.Item value="site">Website</Select.Item>
-                        </Select.Content>
-                    </Select.Root>
-                </Flex> */}
+                {typeof data.data.data?.site !== 'undefined' ? (
+                    <Flex align="start" shrink="0" direction="column" gap="1">
+                        <Text size="1" weight="bold" color="gray" as="label">
+                            Based on
+                        </Text>
+                        <Select.Root
+                            value={tab}
+                            onValueChange={(v) => setTab(v as 'article' | 'site')}
+                        >
+                            <Select.Trigger />
+                            <Select.Content>
+                                <Select.Item value="article">Article</Select.Item>
+                                <Select.Item value="site">Website</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </Flex>
+                ) : null}
             </Flex>
             {data.data.status !== 'COMPLETED' ? (
                 <Flex width="100%" direction="column">
